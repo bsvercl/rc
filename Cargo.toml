@@ -1,0 +1,11 @@
+[package]
+name = "rc"
+version = "0.1.0"
+authors = ["Brad Svercl <bradsvercl@gmail.com>"]
+
+[dependencies]
+minifb = "0.9"
+rand = "0.3"
+image = "*"
+fps_counter = "0.2"
+fixedstep = "*"
