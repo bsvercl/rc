@@ -9,13 +9,15 @@ use minifb::{Key, Scale, Window, WindowOptions};
 use fps_counter::FPSCounter;
 
 mod color {
-    pub const YELLOW: u32 = 0x00f5fa00;
-    pub const GREEN: u32 = 0x0000fa00;
-    pub const BLUE: u32 = 0x00000af0;
-    pub const SKY_BLUE: u32 = 0x00afbeff;
     pub const RED: u32 = 0x00fa0a00;
+    pub const YELLOW: u32 = 0x00f5fa00;
+    pub const BLUE: u32 = 0x00000af0;
+    pub const GREEN: u32 = 0x0000fa00;
+    pub const ORANGE: u32 = 0x00ffa500;
     pub const WHITE: u32 = 0x00fffafa;
-    pub const GRAY: u32 = 0x00787878;
+
+    pub const CORNFLOWER_BLUE: u32 = 0x00afbeff;
+    pub const GRAY: u32 = 0x00808080;
 }
 
 const SCREEN_WIDTH: usize = 640;
@@ -35,11 +37,11 @@ const MAP: [[usize; MAP_WIDTH]; MAP_HEIGHT] =
      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 4, 0, 0, 0, 0, 0, 1],
      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 1],
      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+     [1, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+     [1, 0, 5, 0, 0, 5, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+     [1, 0, 5, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+     [1, 0, 5, 0, 0, 5, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+     [1, 0, 5, 5, 5, 5, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1],
      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -185,7 +187,12 @@ fn update(player: &mut Player) {
 
 fn draw(buffer: &mut [u32], player: &mut Player) {
     // clear buffer
-    draw_rectangle(buffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color::SKY_BLUE);
+    draw_rectangle(buffer,
+                   0,
+                   0,
+                   SCREEN_WIDTH,
+                   SCREEN_HEIGHT,
+                   color::CORNFLOWER_BLUE);
 
     // draw the floor
     draw_rectangle(buffer,
@@ -260,6 +267,7 @@ fn draw(buffer: &mut [u32], player: &mut Player) {
             2 => color::YELLOW,
             3 => color::BLUE,
             4 => color::GREEN,
+            5 => color::ORANGE,
             _ => color::WHITE,
         };
 
