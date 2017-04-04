@@ -6,6 +6,7 @@ extern crate fps_counter;
 extern crate fixedstep;
 
 use minifb::{Key, Scale, Window, WindowOptions};
+use rand::{thread_rng, Rng};
 use fps_counter::FPSCounter;
 
 mod color {
@@ -24,34 +25,49 @@ const SCREEN_WIDTH: usize = 640;
 const SCREEN_HEIGHT: usize = 480;
 const SCREEN_MIDDLE_Y: usize = SCREEN_HEIGHT / 2;
 
-const MAP_WIDTH: usize = 24;
-const MAP_HEIGHT: usize = 24;
+struct Map {
+    data: Vec<usize>,
+    size: usize,
+}
 
-const MAP: [[usize; MAP_WIDTH]; MAP_HEIGHT] =
-    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 4, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 1],
-     [1, 0, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 5, 0, 0, 5, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 5, 0, 0, 0, 0, 0, 0, 3, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 5, 0, 0, 5, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 5, 5, 5, 5, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
+impl Map {
+    fn new(data: &[usize], size: usize) -> Self {
+        Map {
+            data: data.to_vec(),
+            size: size,
+        }
+    }
+
+    fn new_random(size: usize) -> Self {
+        let mut data: Vec<usize> = vec![0; size * size];
+        for i in &mut data {
+            if thread_rng().gen_range(0, 10) == 0 {
+                *i = thread_rng().gen_range(2, 6);
+            }
+        }
+
+        for i in 0..size {
+            data[i + size * 0] = 1;
+            data[i + size * (size - 1)] = 1;
+        }
+
+        for i in 0..size {
+            data[0 + size * i] = 1;
+            data[(size - 1) + size * i] = 1;
+        }
+
+        Map {
+            data: data,
+            size: size,
+        }
+    }
+
+    fn get(&self, x: usize, y: usize) -> usize {
+        let x = if x >= self.size { self.size - 1 } else { x };
+        let y = if y >= self.size { self.size - 1 } else { y };
+        self.data[x + self.size * y]
+    }
+}
 
 // x + width * y
 fn draw_line(buffer: &mut [u32], x: usize, y1: usize, y2: usize, color: u32) {
@@ -71,7 +87,7 @@ fn draw_rectangle(buffer: &mut [u32], x: usize, y: usize, w: usize, h: usize, co
 const PLAYER_MOVE_SPEED: f64 = 0.08;
 const PLAYER_ROTATION_SPEED: f64 = 0.045;
 
-struct Player {
+struct Player<'a> {
     position_x: f64,
     position_y: f64,
 
@@ -86,9 +102,11 @@ struct Player {
 
     turning_left: bool,
     turning_right: bool,
+
+    map: &'a Map,
 }
 
-impl Player {
+impl<'a> Player<'a> {
     fn new(position_x: f64,
            position_y: f64,
 
@@ -96,7 +114,9 @@ impl Player {
            direction_y: f64,
 
            plane_x: f64,
-           plane_y: f64)
+           plane_y: f64,
+
+           map: &'a Map)
            -> Self {
         Player {
             position_x: position_x,
@@ -113,6 +133,8 @@ impl Player {
 
             turning_left: false,
             turning_right: false,
+
+            map: map,
         }
     }
 
@@ -140,11 +162,15 @@ impl Player {
         let move_step_x = self.direction_x * speed;
         let move_step_y = self.direction_y * speed;
 
-        if MAP[(self.position_x + move_step_x) as usize][self.position_y as usize] == 0 {
+        if self.map
+               .get((self.position_x + move_step_x) as usize,
+                    self.position_y as usize) == 0 {
             self.position_x += move_step_x;
         }
 
-        if MAP[self.position_x as usize][(self.position_y + move_step_y) as usize] == 0 {
+        if self.map
+               .get(self.position_x as usize,
+                    (self.position_y + move_step_y) as usize) == 0 {
             self.position_y += move_step_y;
         }
     }
@@ -172,6 +198,7 @@ fn handle_key(player: &mut Player, key: Key) {
         Key::S => player.moving_backward = true,
         Key::A => player.turning_left = true,
         Key::D => player.turning_right = true,
+
         _ => (),
     }
 }
@@ -185,7 +212,7 @@ fn update(player: &mut Player) {
     player.turning_right = false;
 }
 
-fn draw(buffer: &mut [u32], player: &mut Player) {
+fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
     // clear buffer
     draw_rectangle(buffer,
                    0,
@@ -232,7 +259,7 @@ fn draw(buffer: &mut [u32], player: &mut Player) {
 
         let mut north_south_wall: bool = false;
 
-        while MAP[map_x as usize][map_y as usize] == 0 {
+        while map.get(map_x as usize, map_y as usize) == 0 {
             if side_distance_x < side_distance_y {
                 side_distance_x += delta_x;
                 map_x += step_x;
@@ -262,7 +289,7 @@ fn draw(buffer: &mut [u32], player: &mut Player) {
             end = SCREEN_HEIGHT as isize;
         }
 
-        let mut color = match MAP[map_x as usize][map_y as usize] {
+        let mut color = match map.get(map_x as usize, map_y as usize) {
             1 => color::RED,
             2 => color::YELLOW,
             3 => color::BLUE,
@@ -270,6 +297,10 @@ fn draw(buffer: &mut [u32], player: &mut Player) {
             5 => color::ORANGE,
             _ => color::WHITE,
         };
+
+        if north_south_wall {
+            color /= 2;
+        }
 
         let alpha = (color >> 24) & 255;
         let mut red = (color >> 16) & 255;
@@ -301,13 +332,15 @@ fn main() {
                                  })
             .expect("failed  to create window");
 
+    let map = Map::new_random(500);
 
     let mut player = Player::new(22.5,
                                  12.5,
                                  -1.0,
                                  0.0,
                                  0.0,
-                                 SCREEN_WIDTH as f64 / SCREEN_HEIGHT as f64 / 2.0);
+                                 SCREEN_WIDTH as f64 / SCREEN_HEIGHT as f64 / 2.0,
+                                 &map);
 
     let mut counter = FPSCounter::new();
 
@@ -319,11 +352,12 @@ fn main() {
                          handle_key(&mut player, key);
                      });
             update(&mut player);
+
             !window.is_open()
         },
 
         Render(_) => {
-            draw(&mut buffer, &mut player);
+            draw(&mut buffer, &mut player, &map);
             window.update_with_buffer(&buffer);
             window.set_title(format!("fps: {}", counter.tick()).as_str());
         },
