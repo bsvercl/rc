@@ -17,12 +17,15 @@ mod color {
     pub const ORANGE: u32 = 0x00ffa500;
     pub const WHITE: u32 = 0x00fffafa;
 
+    pub const PINK: u32 = 0x00ffc0cb;
+
     pub const CORNFLOWER_BLUE: u32 = 0x00afbeff;
     pub const GRAY: u32 = 0x00808080;
 }
 
 const SCREEN_WIDTH: usize = 640;
 const SCREEN_HEIGHT: usize = 480;
+const SCREEN_MIDDLE_X: usize = SCREEN_WIDTH / 2;
 const SCREEN_MIDDLE_Y: usize = SCREEN_HEIGHT / 2;
 
 struct Map {
@@ -241,7 +244,6 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
 
         let ray_direction_x_squared = ray_direction_x * ray_direction_x;
         let ray_direction_y_squared = ray_direction_y * ray_direction_y;
-
         let delta_x = (1.0 + ray_direction_y_squared / ray_direction_x_squared).sqrt();
         let delta_y = (1.0 + ray_direction_x_squared / ray_direction_y_squared).sqrt();
 
@@ -314,12 +316,27 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
 
         draw_line(buffer, x, start as usize, end as usize, color);
     }
+
+    // crosshair
+    let crosshair_size = 5;
+    draw_rectangle(buffer,
+                   SCREEN_MIDDLE_X,
+                   SCREEN_MIDDLE_Y - crosshair_size / 2,
+                   1,
+                   crosshair_size,
+                   color::PINK);
+    draw_rectangle(buffer,
+                   SCREEN_MIDDLE_X - crosshair_size / 2,
+                   SCREEN_MIDDLE_Y,
+                   crosshair_size,
+                   1,
+                   color::PINK);
 }
 
 fn main() {
     let mut buffer: Vec<u32> = vec![0; SCREEN_WIDTH * SCREEN_HEIGHT];
 
-    let mut window = Window::new("",
+    let mut window = Window::new("rc",
                                  SCREEN_WIDTH,
                                  SCREEN_HEIGHT,
                                  WindowOptions {
