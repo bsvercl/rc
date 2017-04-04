@@ -298,10 +298,6 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
             _ => color::WHITE,
         };
 
-        if north_south_wall {
-            color /= 2;
-        }
-
         let alpha = (color >> 24) & 255;
         let mut red = (color >> 16) & 255;
         let mut green = (color >> 8) & 255;
