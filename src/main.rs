@@ -34,6 +34,7 @@ struct Map {
 }
 
 impl Map {
+    #[allow(dead_code)]
     fn new(data: &[usize], size: usize) -> Self {
         Map {
             data: data.to_vec(),
