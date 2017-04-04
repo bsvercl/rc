@@ -44,17 +44,18 @@ impl Map {
 
     fn new_random(size: usize) -> Self {
         let mut data: Vec<usize> = vec![0; size * size];
+        // 1 in 10 chance to make a wall
         for i in &mut data {
             if thread_rng().gen_range(0, 10) == 0 {
                 *i = thread_rng().gen_range(2, 6);
             }
         }
 
+        // borders around map
         for i in 0..size {
             data[i + size * 0] = 1;
             data[i + size * (size - 1)] = 1;
         }
-
         for i in 0..size {
             data[0 + size * i] = 1;
             data[(size - 1) + size * i] = 1;
