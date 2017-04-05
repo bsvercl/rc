@@ -177,6 +177,25 @@ impl<'a> App<'a> {
                             1,
                             color::PINK);
 
+        for x in 0..self.map.get_size() {
+            for y in 0..self.map.get_size() {
+                let color = match self.map.get(x, y) {
+                    1 => color::RED,
+                    2 => color::YELLOW,
+                    3 => color::BLUE,
+                    4 => color::GREEN,
+                    5 => color::ORANGE,
+                    _ => color::WHITE,
+                };
+
+                self.draw_rectangle(x * 8, y * 8, 8, 8, color);
+            }
+        }
+
+        let player_x = self.player.position_x as usize;
+        let player_y = self.player.position_y as usize;
+        self.draw_rectangle(player_x * 8, player_y * 8, 4, 4, color::PINK);
+
         self.window.update_with_buffer(&self.buffer);
     }
 
