@@ -15,8 +15,13 @@ use app::{App, SCREEN_WIDTH, SCREEN_HEIGHT};
 use map::Map;
 use player::Player;
 
+use std::f64;
+
 fn main() {
     let map = Map::new_random(24);
+    // let fov: f64 = 90.0;
+    // let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, fov.to_radians()),
+    //                        &map);
     let mut app = App::new(Player::new(22.5,
                                        12.5,
                                        -1.0,

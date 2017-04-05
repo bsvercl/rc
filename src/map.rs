@@ -44,8 +44,4 @@ impl Map {
         let y = if y >= self.size { self.size - 1 } else { y };
         self.data[x + self.size * y]
     }
-
-    pub fn get_size(&self) -> usize {
-        self.size
-    }
 }
