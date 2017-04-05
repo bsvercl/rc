@@ -242,19 +242,23 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
             (player.direction_x + player.plane_x * screen_coordinate,
              player.direction_y + player.plane_y * screen_coordinate);
 
+        // coordinates on map from ray position
         let (mut map_x, mut map_y) = (ray_position_x as isize, ray_position_y as isize);
 
+        // length from one side to the other
         let ray_direction_x_squared = ray_direction_x * ray_direction_x;
         let ray_direction_y_squared = ray_direction_y * ray_direction_y;
         let delta_x = (1.0 + ray_direction_y_squared / ray_direction_x_squared).sqrt();
         let delta_y = (1.0 + ray_direction_x_squared / ray_direction_y_squared).sqrt();
 
+        // direction to step in x direction
         let (step_x, mut side_distance_x) = if ray_direction_x < 0.0 {
             (-1, (ray_position_x - map_x as f64) * delta_x)
         } else {
             (1, (map_x as f64 + 1.0 - ray_position_x) * delta_x)
         };
 
+        // direction to step in y direction
         let (step_y, mut side_distance_y) = if ray_direction_y < 0.0 {
             (-1, (ray_position_y - map_y as f64) * delta_y)
         } else {
@@ -264,6 +268,7 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
         let mut north_south_wall: bool = false;
 
         while map.get(map_x as usize, map_y as usize) == 0 {
+            // jump to next square
             if side_distance_x < side_distance_y {
                 side_distance_x += delta_x;
                 map_x += step_x;
@@ -275,14 +280,17 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
             }
         }
 
+        // distance to camera
         let wall_distance: f64 = if north_south_wall {
             ((map_y as f64 - ray_position_y + (1.0 - step_y as f64) / 2.0) / ray_direction_y).abs()
         } else {
             ((map_x as f64 - ray_position_x + (1.0 - step_x as f64) / 2.0) / ray_direction_x).abs()
         };
 
+        // the height of the wall to be drawn
         let wall_height: isize = ((SCREEN_HEIGHT as f64 / wall_distance) as isize).abs();
 
+        // find lowest and heighest pixels to be drawn
         let mut start: isize = -wall_height / 2 + SCREEN_MIDDLE_Y as isize;
         if start < 0 {
             start = 0;
@@ -319,7 +327,7 @@ fn draw(buffer: &mut [u32], player: &mut Player, map: &Map) {
         draw_line(buffer, x, start as usize, end as usize, color);
     }
 
-    // crosshair
+    // draw crosshair
     let crosshair_size = 5;
     draw_rectangle(buffer,
                    SCREEN_MIDDLE_X,
