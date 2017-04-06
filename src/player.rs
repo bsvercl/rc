@@ -1,7 +1,7 @@
 use map::Map;
 
-const PLAYER_MOVE_SPEED: f64 = 0.08;
-const PLAYER_ROTATION_SPEED: f64 = 0.045;
+const PLAYER_MOVE_SPEED: f64 = 10.0;
+const PLAYER_ROTATION_SPEED: f64 = 5.0
 
 pub struct Player {
     pub position_x: f64,
@@ -46,53 +46,41 @@ impl Player {
         }
     }
 
-    pub fn update<'a>(&mut self, map: &'a Map) {
-        if self.moving_forward {
-            self.move_in_direction(&map, true);
-        } else if self.moving_backward {
-            self.move_in_direction(&map, false);
+    pub fn update<'a>(&mut self, map: &'a Map, dt: f64) {
+        if self.moving_forward || self.moving_backward {
+            let speed = if self.moving_forward {
+                PLAYER_MOVE_SPEED * dt
+            } else {
+                -PLAYER_MOVE_SPEED * dt
+            };
+
+            let move_step_x = self.direction_x * speed;
+            let move_step_y = self.direction_y * speed;
+
+            if map.get((self.position_x + move_step_x) as usize,
+                       self.position_y as usize) == 0 {
+                self.position_x += move_step_x;
+            }
+
+            if map.get(self.position_x as usize,
+                       (self.position_y + move_step_y) as usize) == 0 {
+                self.position_y += move_step_y;
+            }
         }
 
-        if self.turning_left {
-            self.turn_in_direction(true);
-        } else if self.turning_right {
-            self.turn_in_direction(false);
+        if self.turning_left || self.turning_right {
+            let speed = if self.turning_left {
+                PLAYER_ROTATION_SPEED * dt
+            } else {
+                -PLAYER_ROTATION_SPEED * dt
+            };
+
+            let old_direction_x = self.direction_x;
+            self.direction_x = self.direction_x * speed.cos() - self.direction_y * speed.sin();
+            self.direction_y = old_direction_x * speed.sin() + self.direction_y * speed.cos();
+            let old_plane_x = self.plane_x;
+            self.plane_x = self.plane_x * speed.cos() - self.plane_y * speed.sin();
+            self.plane_y = old_plane_x * speed.sin() + self.plane_y * speed.cos();
         }
-    }
-
-    fn move_in_direction(&mut self, map: &Map, forwards: bool) {
-        let speed = if forwards {
-            PLAYER_MOVE_SPEED
-        } else {
-            -PLAYER_MOVE_SPEED
-        };
-
-        let move_step_x = self.direction_x * speed;
-        let move_step_y = self.direction_y * speed;
-
-        if map.get((self.position_x + move_step_x) as usize,
-                   self.position_y as usize) == 0 {
-            self.position_x += move_step_x;
-        }
-
-        if map.get(self.position_x as usize,
-                   (self.position_y + move_step_y) as usize) == 0 {
-            self.position_y += move_step_y;
-        }
-    }
-
-    fn turn_in_direction(&mut self, left: bool) {
-        let speed = if left {
-            PLAYER_ROTATION_SPEED
-        } else {
-            -PLAYER_ROTATION_SPEED
-        };
-
-        let old_direction_x = self.direction_x;
-        self.direction_x = self.direction_x * speed.cos() - self.direction_y * speed.sin();
-        self.direction_y = old_direction_x * speed.sin() + self.direction_y * speed.cos();
-        let old_plane_x = self.plane_x;
-        self.plane_x = self.plane_x * speed.cos() - self.plane_y * speed.sin();
-        self.plane_y = old_plane_x * speed.sin() + self.plane_y * speed.cos();
     }
 }

@@ -26,7 +26,7 @@ impl<'a> App<'a> {
     }
 
     pub fn update(&mut self, dt: f64) {
-        self.player.update(&self.map);
+        self.player.update(&self.map, dt);
     }
 
     pub fn handle_key(&mut self, key: Key, pressed: bool) {
