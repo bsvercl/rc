@@ -19,7 +19,7 @@ use player::Player;
 use std::f64;
 
 fn main() {
-    let map = Map::new_random(24);
+    let map = Map::new_random(500);
     // let fov: f64 = 90.0;
     // let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, fov.to_radians()),
     //                        &map);

@@ -17,6 +17,7 @@ pub struct Player {
     pub moving_backward: bool,
     pub turning_left: bool,
     pub turning_right: bool,
+    pub running: bool,
 }
 
 impl Player {
@@ -43,6 +44,7 @@ impl Player {
             moving_backward: false,
             turning_left: false,
             turning_right: false,
+            running: false,
         }
     }
 
@@ -53,6 +55,7 @@ impl Player {
             } else {
                 -PLAYER_MOVE_SPEED * dt
             };
+            let speed = if self.running { speed * 2.0 } else { speed };
 
             let move_step_x = self.direction_x * speed;
             let move_step_y = self.direction_y * speed;

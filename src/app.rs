@@ -36,6 +36,8 @@ impl<'a> App<'a> {
             Key::A => self.player.turning_left = pressed,
             Key::D => self.player.turning_right = pressed,
 
+            Key::LShift => self.player.running = pressed,
+
             _ => (),
         }
     }
