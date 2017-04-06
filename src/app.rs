@@ -126,21 +126,12 @@ impl<'a> App<'a> {
                 _ => color::WHITE,
             };
 
-            // // let alpha = (color >> 24) & 0xff;
-            // let mut red = (color >> 16) & 0xff;
-            // let mut green = (color >> 8) & 0xff;
-            // let mut blue = color & 0xff;
-
-            // let brightness = (wall_distance / 2.0) as u32;
-            // if brightness > 1 {
-            //     red /= brightness;
-            //     green /= brightness;
-            //     blue /= brightness;
-            // }
-
-            // // color = ((alpha & 0xff) << 24) | ((red & 0xff) << 16) | ((green & 0xff) << 8) |
-            // //         (blue & 0xff);
-            // color = 0xff000000 | ((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff);
+            let brightness = (wall_distance / 2.0) as f32;
+            if brightness > 1.0 {
+                for x in 0..3 {
+                    color[x] /= brightness;
+                }
+            }
 
             line(color,
                  1.0,
