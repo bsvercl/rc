@@ -1,11 +1,13 @@
-pub const RED: u32 = 0x00fa0a00;
-pub const YELLOW: u32 = 0x00f5fa00;
-pub const BLUE: u32 = 0x00000af0;
-pub const GREEN: u32 = 0x0000fa00;
-pub const ORANGE: u32 = 0x00ffa500;
-pub const WHITE: u32 = 0x00fffafa;
+use piston_window::types::Color;
 
-pub const PINK: u32 = 0x00ffc0cb;
+pub const RED: Color = [1.0, 0.0, 1.0, 1.0];
+pub const GREEN: Color = [0.0, 1.0, 0.0, 1.0];
+pub const BLUE: Color = [0.0, 0.0, 1.0, 1.0];
+pub const ORANGE: Color = [1.0, 0.6, 0.0, 1.0];
+pub const YELLOW: Color = [1.0, 1.0, 0.0, 1.0];
+pub const WHITE: Color = [1.0, 1.0, 1.0, 1.0];
 
-pub const CORNFLOWER_BLUE: u32 = 0x00afbeff;
-pub const GRAY: u32 = 0x00808080;
+pub const PINK: Color = [1.0, 0.7, 0.7, 1.0];
+
+pub const CORNFLOWER_BLUE: Color = [0.3, 0.5, 0.9, 1.0];
+pub const GRAY: Color = [0.5, 0.5, 0.5, 1.0];

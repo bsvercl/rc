@@ -58,11 +58,6 @@ impl Player {
         } else if self.turning_right {
             self.turn_in_direction(false);
         }
-
-        self.moving_forward = false;
-        self.moving_backward = false;
-        self.turning_left = false;
-        self.turning_right = false;
     }
 
     fn move_in_direction(&mut self, map: &Map, forwards: bool) {

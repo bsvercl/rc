@@ -1,72 +1,52 @@
-use minifb::{Key, Scale, Window, WindowOptions};
+use piston_window::*;
+use piston_window::types::Color;
 
 use color;
 use map::Map;
 use player::Player;
 
-pub const SCREEN_WIDTH: usize = 640;
-pub const SCREEN_HEIGHT: usize = 480;
-const SCREEN_MIDDLE_X: usize = SCREEN_WIDTH / 2;
-const SCREEN_MIDDLE_Y: usize = SCREEN_HEIGHT / 2;
+use im;
+
+pub const SCREEN_WIDTH: u32 = 640;
+pub const SCREEN_HEIGHT: u32 = 480;
+const SCREEN_MIDDLE_X: u32 = SCREEN_WIDTH / 2;
+const SCREEN_MIDDLE_Y: u32 = SCREEN_HEIGHT / 2;
 
 pub struct App<'a> {
-    window: Window,
     player: Player,
     map: &'a Map,
-
-    buffer: Vec<u32>,
 }
 
 impl<'a> App<'a> {
     pub fn new(player: Player, map: &'a Map) -> Self {
         App {
-            window: Window::new("rc",
-                                SCREEN_WIDTH,
-                                SCREEN_HEIGHT,
-                                WindowOptions {
-                                    scale: Scale::X2,
-                                    ..WindowOptions::default()
-                                })
-                    .expect("failed to create window"),
             player: player,
             map: map,
-            buffer: vec![0; SCREEN_WIDTH * SCREEN_HEIGHT],
         }
     }
 
-    pub fn update(&mut self) -> bool {
-        self.window
-            .get_keys()
-            .map(|keys| for key in keys {
-                     self.handle_key(key);
-                 });
-
+    pub fn update(&mut self, dt: f64) {
         self.player.update(&self.map);
-
-        self.window.is_open()
     }
 
-    pub fn handle_key(&mut self, key: Key) {
+    pub fn handle_key(&mut self, key: Key, pressed: bool) {
         match key {
-            Key::W => self.player.moving_forward = true,
-            Key::S => self.player.moving_backward = true,
-            Key::A => self.player.turning_left = true,
-            Key::D => self.player.turning_right = true,
+            Key::W => self.player.moving_forward = pressed,
+            Key::S => self.player.moving_backward = pressed,
+            Key::A => self.player.turning_left = pressed,
+            Key::D => self.player.turning_right = pressed,
 
             _ => (),
         }
     }
 
-    pub fn draw(&mut self) {
-        // clear buffer
-        self.draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color::CORNFLOWER_BLUE);
+    pub fn render(&mut self, c: &Context, g: &mut G2d) {
+        clear(color::CORNFLOWER_BLUE, g);
 
-        // draw the floor
-        self.draw_rectangle(0,
-                            SCREEN_MIDDLE_Y,
-                            SCREEN_WIDTH,
-                            SCREEN_MIDDLE_Y,
-                            color::GRAY);
+        rectangle(color::GRAY,
+                  [0.0, 0.0, SCREEN_WIDTH as f64, SCREEN_MIDDLE_Y as f64],
+                  c.trans(0.0, SCREEN_MIDDLE_Y as f64).transform,
+                  g);
 
         // draw walls
         for x in 0..SCREEN_WIDTH {
@@ -139,78 +119,34 @@ impl<'a> App<'a> {
 
             let mut color = match self.map.get(map_x as usize, map_y as usize) {
                 1 => color::RED,
-                2 => color::YELLOW,
+                2 => color::GREEN,
                 3 => color::BLUE,
-                4 => color::GREEN,
-                5 => color::ORANGE,
+                4 => color::ORANGE,
+                5 => color::YELLOW,
                 _ => color::WHITE,
             };
 
-            // let alpha = (color >> 24) & 0xff;
-            let mut red = (color >> 16) & 0xff;
-            let mut green = (color >> 8) & 0xff;
-            let mut blue = color & 0xff;
+            // // let alpha = (color >> 24) & 0xff;
+            // let mut red = (color >> 16) & 0xff;
+            // let mut green = (color >> 8) & 0xff;
+            // let mut blue = color & 0xff;
 
-            let brightness = (wall_distance / 2.0) as u32;
-            if brightness > 1 {
-                red /= brightness;
-                green /= brightness;
-                blue /= brightness;
-            }
+            // let brightness = (wall_distance / 2.0) as u32;
+            // if brightness > 1 {
+            //     red /= brightness;
+            //     green /= brightness;
+            //     blue /= brightness;
+            // }
 
-            // color = ((alpha & 0xff) << 24) | ((red & 0xff) << 16) | ((green & 0xff) << 8) |
-            //         (blue & 0xff);
-            color = 0xff000000 | ((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff);
+            // // color = ((alpha & 0xff) << 24) | ((red & 0xff) << 16) | ((green & 0xff) << 8) |
+            // //         (blue & 0xff);
+            // color = 0xff000000 | ((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff);
 
-            self.draw_line(x, start as usize, end as usize, color);
-        }
-
-        // draw crosshair
-        let crosshair_size = 5;
-        self.draw_rectangle(SCREEN_MIDDLE_X,
-                            SCREEN_MIDDLE_Y - crosshair_size / 2,
-                            1,
-                            crosshair_size,
-                            color::PINK);
-        self.draw_rectangle(SCREEN_MIDDLE_X - crosshair_size / 2,
-                            SCREEN_MIDDLE_Y,
-                            crosshair_size,
-                            1,
-                            color::PINK);
-
-        // draw minimap
-        for x in 0..self.map.get_size() {
-            for y in 0..self.map.get_size() {
-                let color = match self.map.get(x, y) {
-                    1 => color::RED,
-                    2 => color::YELLOW,
-                    3 => color::BLUE,
-                    4 => color::GREEN,
-                    5 => color::ORANGE,
-                    _ => color::WHITE,
-                };
-
-                self.draw_rectangle(x * 8, y * 8, 8, 8, color);
-            }
-        }
-        let player_x = self.player.position_x as usize;
-        let player_y = self.player.position_y as usize;
-        self.draw_rectangle(player_x * 8, player_y * 8, 4, 4, color::PINK);
-
-        self.window.update_with_buffer(&self.buffer);
-    }
-
-    fn draw_line(&mut self, x: usize, y1: usize, y2: usize, color: u32) {
-        for y in y1..y2 {
-            self.buffer[x + SCREEN_WIDTH * y] = color;
-        }
-    }
-
-    fn draw_rectangle(&mut self, x: usize, y: usize, w: usize, h: usize, color: u32) {
-        for x in x..(x + w) {
-            for y in y..(y + h) {
-                self.buffer[x + SCREEN_WIDTH * y] = color;
-            }
+            line(color,
+                 1.0,
+                 [x as f64, start as f64, x as f64, end as f64],
+                 c.transform,
+                 g);
         }
     }
 }
