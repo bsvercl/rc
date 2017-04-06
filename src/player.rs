@@ -1,7 +1,7 @@
 use map::Map;
 
 const PLAYER_MOVE_SPEED: f64 = 10.0;
-const PLAYER_ROTATION_SPEED: f64 = 5.0
+const PLAYER_ROTATION_SPEED: f64 = 5.0;
 
 pub struct Player {
     pub position_x: f64,
