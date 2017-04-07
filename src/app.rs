@@ -5,8 +5,6 @@ use color;
 use map::Map;
 use player::Player;
 
-use im;
-
 pub const SCREEN_WIDTH: u32 = 640;
 pub const SCREEN_HEIGHT: u32 = 480;
 const SCREEN_MIDDLE_X: u32 = SCREEN_WIDTH / 2;

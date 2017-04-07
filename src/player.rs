@@ -48,7 +48,7 @@ impl Player {
         }
     }
 
-    pub fn update<'a>(&mut self, map: &'a Map, dt: f64) {
+    pub fn update(&mut self, map: &Map, dt: f64) {
         if self.moving_forward || self.moving_backward {
             let speed = if self.moving_forward {
                 PLAYER_MOVE_SPEED * dt
