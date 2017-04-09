@@ -51,7 +51,7 @@ fn main() {
                              11,
                              &format!("fps: {}", counter.tick()),
                              &mut glyphs,
-                             c.trans(10.0, 1.0).transform,
+                             c.trans(1.0, 12.0).transform,
                              g);
                     })
                     .unwrap();
