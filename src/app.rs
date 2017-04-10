@@ -1,4 +1,5 @@
 use piston_window::*;
+use piston_window::types::ColorComponent;
 use cgmath::vec2;
 
 use color;
@@ -133,7 +134,7 @@ impl<'a> App<'a> {
                 _ => color::WHITE,
             };
 
-            let brightness = (wall_distance / 2.0) as f32;
+            let brightness = (wall_distance / 2.0) as ColorComponent;
             if brightness > 1.0 {
                 for x in color.iter_mut().take(3) {
                     *x /= brightness;
