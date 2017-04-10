@@ -1,5 +1,5 @@
 use map::Map;
-use cgmath::Vector2;
+use cgmath::{Basis2, Rad, Rotation, Rotation2, Vector2};
 
 const PLAYER_MOVE_SPEED: f64 = 5.0;
 const PLAYER_ROTATION_SPEED: f64 = 2.0;
@@ -68,15 +68,10 @@ impl Player {
                 -PLAYER_ROTATION_SPEED * dt
             };
 
-            let c = speed.cos();
-            let s = speed.sin();
+            let rot: Basis2<f64> = Rotation2::from_angle(Rad(speed));
 
-            let old_direction_x = self.direction.x;
-            self.direction.x = self.direction.x * c - self.direction.y * s;
-            self.direction.y = old_direction_x * s + self.direction.y * c;
-            let old_plane_x = self.plane.x;
-            self.plane.x = self.plane.x * c - self.plane.y * s;
-            self.plane.y = old_plane_x * s + self.plane.y * c;
+            self.direction = rot.rotate_vector(self.direction);
+            self.plane = rot.rotate_vector(self.plane);
         }
     }
 }
