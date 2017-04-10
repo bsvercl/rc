@@ -69,16 +69,16 @@ impl<'a> App<'a> {
 
             // direction to step in x direction
             let (step_x, mut side_distance_x) = if ray_direction.x < 0.0 {
-                (-1, (ray_position.x - map_position.x as f64) * delta.x)
+                (-1isize, (ray_position.x - map_position.x as f64) * delta.x)
             } else {
-                (1, (map_position.x as f64 + 1.0 - ray_position.x) * delta.x)
+                (1isize, (map_position.x as f64 + 1.0 - ray_position.x) * delta.x)
             };
 
             // direction to step in y direction
             let (step_y, mut side_distance_y) = if ray_direction.y < 0.0 {
-                (-1, (ray_position.y - map_position.y as f64) * delta.y)
+                (-1isize, (ray_position.y - map_position.y as f64) * delta.y)
             } else {
-                (1, (map_position.y as f64 + 1.0 - ray_position.y) * delta.y)
+                (1isize, (map_position.y as f64 + 1.0 - ray_position.y) * delta.y)
             };
 
             let mut north_south_wall: bool = false;
