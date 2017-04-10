@@ -29,7 +29,7 @@ impl Map {
             data[i + size * (size - 1)] = 1;
         }
         for i in 0..size {
-            data[0 + size * i] = 1;
+            data[size * i] = 1;
             data[(size - 1) + size * i] = 1;
         }
 
@@ -45,7 +45,7 @@ impl Map {
         self.data[x + self.size * y]
     }
 
-    pub fn get_size(&self) -> usize {
+    /*pub fn get_size(&self) -> usize {
         self.size
-    }
+    }*/
 }

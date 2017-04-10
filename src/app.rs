@@ -7,7 +7,7 @@ use player::Player;
 
 pub const SCREEN_WIDTH: u32 = 640;
 pub const SCREEN_HEIGHT: u32 = 480;
-const SCREEN_MIDDLE_X: u32 = SCREEN_WIDTH / 2;
+//const SCREEN_MIDDLE_X: u32 = SCREEN_WIDTH / 2;
 const SCREEN_MIDDLE_Y: u32 = SCREEN_HEIGHT / 2;
 
 pub struct App<'a> {
@@ -24,7 +24,7 @@ impl<'a> App<'a> {
     }
 
     pub fn update(&mut self, dt: f64) {
-        self.player.update(&self.map, dt);
+        self.player.update(self.map, dt);
     }
 
     pub fn handle_key(&mut self, key: Key, pressed: bool) {
@@ -135,8 +135,8 @@ impl<'a> App<'a> {
 
             let brightness = (wall_distance / 2.0) as f32;
             if brightness > 1.0 {
-                for x in 0..3 {
-                    color[x] /= brightness;
+                for x in color.iter_mut().take(3) {
+                    *x /= brightness;
                 }
             }
 
