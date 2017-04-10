@@ -78,12 +78,15 @@ impl Player {
                 -PLAYER_ROTATION_SPEED * dt
             };
 
+            let c = speed.cos();
+            let s = speed.sin();
+
             let old_direction_x = self.direction_x;
-            self.direction_x = self.direction_x * speed.cos() - self.direction_y * speed.sin();
-            self.direction_y = old_direction_x * speed.sin() + self.direction_y * speed.cos();
+            self.direction_x = self.direction_x * c - self.direction_y * s;
+            self.direction_y = old_direction_x * s + self.direction_y * c;
             let old_plane_x = self.plane_x;
-            self.plane_x = self.plane_x * speed.cos() - self.plane_y * speed.sin();
-            self.plane_y = old_plane_x * speed.sin() + self.plane_y * speed.cos();
+            self.plane_x = self.plane_x * c - self.plane_y * s;
+            self.plane_y = old_plane_x * s + self.plane_y * c;
         }
     }
 }
