@@ -29,10 +29,10 @@ impl<'a> App<'a> {
 
     pub fn handle_key(&mut self, key: Key, pressed: bool) {
         match key {
-            Key::W => self.player.moving_forward = pressed,
-            Key::S => self.player.moving_backward = pressed,
-            Key::A => self.player.turning_left = pressed,
-            Key::D => self.player.turning_right = pressed,
+            Key::W | Key::Up => self.player.moving_forward = pressed,
+            Key::S | Key::Down => self.player.moving_backward = pressed,
+            Key::A | Key::Left => self.player.turning_left = pressed,
+            Key::D | Key::Right => self.player.turning_right = pressed,
 
             Key::LShift => self.player.running = pressed,
 
@@ -135,8 +135,8 @@ impl<'a> App<'a> {
 
             line(color,
                  1.0,
-                 [x as f64, start as f64, x as f64, end as f64],
-                 c.transform,
+                 [0.0, start as f64, 0.0, end as f64],
+                 c.trans(x as f64, 0.0).transform,
                  g);
         }
     }
