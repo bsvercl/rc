@@ -1,5 +1,5 @@
 use map::Map;
-use cgmath::{Basis2, Rad, Rotation, Rotation2, Vector2};
+use cgmath::{Basis2, Rad, Rotation, Rotation2, Vector2, vec2};
 
 const PLAYER_MOVE_SPEED: f64 = 5.0;
 const PLAYER_ROTATION_SPEED: f64 = 2.0;
@@ -27,9 +27,9 @@ impl Player {
                plane_y: f64)
                -> Self {
         Player {
-            position: Vector2::new(position_x, position_y),
-            direction: Vector2::new(direction_x, direction_y),
-            plane: Vector2::new(plane_x, plane_y),
+            position: vec2(position_x, position_y),
+            direction: vec2(direction_x, direction_y),
+            plane: vec2(plane_x, plane_y),
 
             moving_forward: false,
             moving_backward: false,
