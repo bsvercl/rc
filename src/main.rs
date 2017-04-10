@@ -33,6 +33,7 @@ fn main() {
                            &map);
 
     let mut window: PistonWindow = WindowSettings::new("", [SCREEN_WIDTH, SCREEN_HEIGHT])
+        .exit_on_esc(true)
         .build()
         .unwrap();
     let mut counter = FPSCounter::new();

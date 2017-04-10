@@ -43,19 +43,23 @@ impl<'a> App<'a> {
     pub fn render(&mut self, c: &Context, g: &mut G2d) {
         clear(color::CORNFLOWER_BLUE, g);
 
+        let screen_width_f64 = SCREEN_WIDTH as f64;
+        let screen_height_f64 = SCREEN_HEIGHT as f64;
+        let screen_middle_y_f64 = SCREEN_MIDDLE_Y as f64;
+
         rectangle(color::GRAY,
-                  [0.0, 0.0, SCREEN_WIDTH as f64, SCREEN_MIDDLE_Y as f64],
-                  c.trans(0.0, SCREEN_MIDDLE_Y as f64).transform,
+                  [0.0, 0.0, screen_width_f64, screen_middle_y_f64],
+                  c.trans(0.0, screen_middle_y_f64).transform,
                   g);
 
         // draw walls
         for x in 0..SCREEN_WIDTH {
-            let screen_coordinate: f64 = (x << 1) as f64 / SCREEN_WIDTH as f64 - 1.0;
+            let screen_coordinate: f64 = (x << 1) as f64 / screen_width_f64 - 1.0;
             let ray_position = self.player.position;
             let ray_direction = self.player.direction + self.player.plane * screen_coordinate;
 
             // coordinates on map from ray position
-            let (mut map_x, mut map_y) = (ray_position.x as isize, ray_position.y as isize);
+            let mut map_position = vec2(ray_position.x as isize, ray_position.y as isize);
 
             // length from one side to the other
             let ray_direction_x_squared = ray_direction.x * ray_direction.x;
@@ -65,57 +69,62 @@ impl<'a> App<'a> {
 
             // direction to step in x direction
             let (step_x, mut side_distance_x) = if ray_direction.x < 0.0 {
-                (-1, (ray_position.x - map_x as f64) * delta.x)
+                (-1, (ray_position.x - map_position.x as f64) * delta.x)
             } else {
-                (1, (map_x as f64 + 1.0 - ray_position.x) * delta.x)
+                (1, (map_position.x as f64 + 1.0 - ray_position.x) * delta.x)
             };
 
             // direction to step in y direction
             let (step_y, mut side_distance_y) = if ray_direction.y < 0.0 {
-                (-1, (ray_position.y - map_y as f64) * delta.y)
+                (-1, (ray_position.y - map_position.y as f64) * delta.y)
             } else {
-                (1, (map_y as f64 + 1.0 - ray_position.y) * delta.y)
+                (1, (map_position.y as f64 + 1.0 - ray_position.y) * delta.y)
             };
 
             let mut north_south_wall: bool = false;
 
-            while self.map.get(map_x as usize, map_y as usize) == 0 {
+            while self.map
+                      .get(map_position.x as usize, map_position.y as usize) ==
+                  0 {
                 // jump to next square
                 if side_distance_x < side_distance_y {
                     side_distance_x += delta.x;
-                    map_x += step_x;
+                    map_position.x += step_x;
                     north_south_wall = false;
                 } else {
                     side_distance_y += delta.y;
-                    map_y += step_y;
+                    map_position.y += step_y;
                     north_south_wall = true;
                 }
             }
 
             // distance to camera
             let wall_distance: f64 = if north_south_wall {
-                ((map_y as f64 - ray_position.y + (1.0 - step_y as f64) / 2.0) / ray_direction.y)
-                    .abs()
+                ((map_position.y as f64 - ray_position.y + (1.0 - step_y as f64) / 2.0) /
+                 ray_direction.y)
+                        .abs()
             } else {
-                ((map_x as f64 - ray_position.x + (1.0 - step_x as f64) / 2.0) / ray_direction.x)
-                    .abs()
+                ((map_position.x as f64 - ray_position.x + (1.0 - step_x as f64) / 2.0) /
+                 ray_direction.x)
+                        .abs()
             };
 
             // the height of the wall to be drawn
-            let wall_height: isize = ((SCREEN_HEIGHT as f64 / wall_distance) as isize).abs();
+            let wall_height: f64 = (screen_height_f64 / wall_distance).abs();
 
             // find lowest and heighest pixels to be drawn
-            let mut start: isize = -wall_height / 2 + SCREEN_MIDDLE_Y as isize;
-            if start < 0 {
-                start = 0;
+            let mut start: f64 = -wall_height / 2.0 + screen_middle_y_f64;
+            if start < 0.0 {
+                start = 0.0;
             }
 
-            let mut end: isize = wall_height / 2 + SCREEN_MIDDLE_Y as isize;
-            if end > SCREEN_HEIGHT as isize {
-                end = SCREEN_HEIGHT as isize;
+            let mut end: f64 = wall_height / 2.0 + screen_middle_y_f64;
+            if end > screen_height_f64 {
+                end = screen_height_f64;
             }
 
-            let mut color = match self.map.get(map_x as usize, map_y as usize) {
+            let mut color = match self.map
+                      .get(map_position.x as usize, map_position.y as usize) {
                 1 => color::RED,
                 2 => color::GREEN,
                 3 => color::BLUE,
@@ -133,7 +142,7 @@ impl<'a> App<'a> {
 
             line(color,
                  1.0,
-                 [0.0, start as f64, 0.0, end as f64],
+                 [0.0, start, 0.0, end],
                  c.trans(x as f64, 0.0).transform,
                  g);
         }
