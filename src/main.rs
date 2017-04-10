@@ -2,12 +2,12 @@ extern crate piston_window;
 extern crate rand;
 extern crate image as im;
 extern crate fps_counter;
+extern crate cgmath;
 
 mod app;
 mod color;
 mod map;
 mod player;
-mod point;
 
 use piston_window::*;
 use fps_counter::FPSCounter;

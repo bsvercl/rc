@@ -1,17 +1,13 @@
 use map::Map;
+use cgmath::Vector2;
 
 const PLAYER_MOVE_SPEED: f64 = 5.0;
 const PLAYER_ROTATION_SPEED: f64 = 2.0;
 
 pub struct Player {
-    pub position_x: f64,
-    pub position_y: f64,
-
-    pub direction_x: f64,
-    pub direction_y: f64,
-
-    pub plane_x: f64,
-    pub plane_y: f64,
+    pub position: Vector2<f64>,
+    pub direction: Vector2<f64>,
+    pub plane: Vector2<f64>,
 
     pub moving_forward: bool,
     pub moving_backward: bool,
@@ -31,14 +27,9 @@ impl Player {
                plane_y: f64)
                -> Self {
         Player {
-            position_x: position_x,
-            position_y: position_y,
-
-            direction_x: direction_x,
-            direction_y: direction_y,
-
-            plane_x: plane_x,
-            plane_y: plane_y,
+            position: Vector2::new(position_x, position_y),
+            direction: Vector2::new(direction_x, direction_y),
+            plane: Vector2::new(plane_x, plane_y),
 
             moving_forward: false,
             moving_backward: false,
@@ -57,17 +48,16 @@ impl Player {
             };
             let speed = if self.running { speed * 2.0 } else { speed };
 
-            let move_step_x = self.direction_x * speed;
-            let move_step_y = self.direction_y * speed;
+            let move_step = self.direction * speed;
 
-            if map.get((self.position_x + move_step_x) as usize,
-                       self.position_y as usize) == 0 {
-                self.position_x += move_step_x;
+            if map.get((self.position.x + move_step.x) as usize,
+                       self.position.y as usize) == 0 {
+                self.position.x += move_step.x;
             }
 
-            if map.get(self.position_x as usize,
-                       (self.position_y + move_step_y) as usize) == 0 {
-                self.position_y += move_step_y;
+            if map.get(self.position.x as usize,
+                       (self.position.y + move_step.y) as usize) == 0 {
+                self.position.y += move_step.y;
             }
         }
 
@@ -81,12 +71,12 @@ impl Player {
             let c = speed.cos();
             let s = speed.sin();
 
-            let old_direction_x = self.direction_x;
-            self.direction_x = self.direction_x * c - self.direction_y * s;
-            self.direction_y = old_direction_x * s + self.direction_y * c;
-            let old_plane_x = self.plane_x;
-            self.plane_x = self.plane_x * c - self.plane_y * s;
-            self.plane_y = old_plane_x * s + self.plane_y * c;
+            let old_direction_x = self.direction.x;
+            self.direction.x = self.direction.x * c - self.direction.y * s;
+            self.direction.y = old_direction_x * s + self.direction.y * c;
+            let old_plane_x = self.plane.x;
+            self.plane.x = self.plane.x * c - self.plane.y * s;
+            self.plane.y = old_plane_x * s + self.plane.y * c;
         }
     }
 }

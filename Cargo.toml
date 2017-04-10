@@ -8,3 +8,5 @@ piston_window = "0.64"
 rand = "0.3"
 image = "*"
 fps_counter = "0.2"
+cgmath = "*"
+
