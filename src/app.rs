@@ -40,13 +40,18 @@ impl<'a> App<'a> {
         }
     }
 
-    pub fn handle_mouse_relative(&mut self, x: f64, _: f64) {
+    pub fn handle_mouse_relative(&mut self, x: f64, y: f64) {
         let speed = x * -1.0 * 0.01;
 
         let rot: Basis2<f64> = Rotation2::from_angle(Rad(speed));
 
         self.player.direction = rot.rotate_vector(self.player.direction);
         self.player.plane = rot.rotate_vector(self.player.plane);
+
+        if (y > 0.0 && self.player.position.z > -750.0) ||
+           (y < 0.0 && self.player.position.z < 750.0) {
+            self.player.position.z += y * -1.5;
+        }
     }
 
     pub fn render(&mut self, c: &Context, g: &mut G2d) {
@@ -56,10 +61,21 @@ impl<'a> App<'a> {
         let screen_height_f64 = SCREEN_HEIGHT as f64;
         let screen_middle_y_f64 = SCREEN_MIDDLE_Y as f64;
 
-        rectangle(color::GRAY,
-                  [0.0, 0.0, screen_width_f64, screen_middle_y_f64],
-                  c.trans(0.0, screen_middle_y_f64).transform,
-                  g);
+        if screen_middle_y_f64 + self.player.position.z < 0.0 {
+            rectangle(color::GRAY,
+                      [0.0, 0.0, screen_width_f64, screen_height_f64],
+                      c.transform,
+                      g);
+        } else {
+            rectangle(color::GRAY,
+                      [0.0,
+                       0.0,
+                       screen_width_f64,
+                       screen_middle_y_f64 - self.player.position.z],
+                      c.trans(0.0, screen_middle_y_f64 + self.player.position.z)
+                          .transform,
+                      g);
+        }
 
         // draw walls
         for x in 0..SCREEN_WIDTH {
@@ -90,7 +106,7 @@ impl<'a> App<'a> {
                 (1isize, (map_position.y as f64 + 1.0 - ray_position.y) * delta.y)
             };
 
-            let mut north_south_wall: bool = false;
+            let mut north_south_wall = false;
 
             while self.map
                       .get(map_position.x as usize, map_position.y as usize) ==
@@ -123,13 +139,13 @@ impl<'a> App<'a> {
 
             // find lowest and heighest pixels to be drawn
             let mut start: f64 = -wall_height / 2.0 + screen_middle_y_f64;
-            if start < 0.0 {
-                start = 0.0;
+            if start < -self.player.position.z {
+                start = -self.player.position.z;
             }
 
             let mut end: f64 = wall_height / 2.0 + screen_middle_y_f64;
-            if end > screen_height_f64 {
-                end = screen_height_f64;
+            if end > screen_height_f64 - self.player.position.z {
+                end = screen_height_f64 - self.player.position.z;
             }
 
             let mut color = match self.map
@@ -155,9 +171,19 @@ impl<'a> App<'a> {
                 }
             }
 
+            let mut y1 = start + self.player.position.z;
+            if y1 < 0.0 {
+                y1 = 0.0;
+            }
+
+            let mut y2 = end + self.player.position.z;
+            if y2 < 0.0 {
+                y2 = 0.0;
+            }
+
             line(color,
                  1.0,
-                 [0.0, start, 0.0, end],
+                 [0.0, y1, 0.0, y2],
                  c.trans(x as f64, 0.0).transform,
                  g);
         }

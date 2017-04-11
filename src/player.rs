@@ -1,11 +1,11 @@
 use map::Map;
-use cgmath::{Vector2, vec2};
+use cgmath::{Vector2, Vector3, vec2, vec3};
 
 const PLAYER_MOVE_SPEED: f64 = 5.0;
 //const PLAYER_ROTATION_SPEED: f64 = 2.0;
 
 pub struct Player {
-    pub position: Vector2<f64>,
+    pub position: Vector3<f64>,
     pub direction: Vector2<f64>,
     pub plane: Vector2<f64>,
 
@@ -27,7 +27,7 @@ impl Player {
                plane_y: f64)
                -> Self {
         Player {
-            position: vec2(position_x, position_y),
+            position: vec3(position_x, position_y, 0.0),
             direction: vec2(direction_x, direction_y),
             plane: vec2(plane_x, plane_y),
 
