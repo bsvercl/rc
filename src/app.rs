@@ -79,7 +79,7 @@ impl<'a> App<'a> {
 
         // draw walls
         for x in 0..SCREEN_WIDTH {
-            let screen_coordinate: f64 = (x << 1) as f64 / screen_width_f64 - 1.0;
+            let screen_coordinate: f64 = (x as f64 * 2.0) / screen_width_f64 - 1.0;
             let ray_position = self.player.position;
             let ray_direction = self.player.direction + self.player.plane * screen_coordinate;
 
