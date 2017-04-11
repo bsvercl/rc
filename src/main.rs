@@ -38,7 +38,7 @@ fn main() {
         .unwrap();
     window.set_capture_cursor(true);
     let mut counter = FPSCounter::new();
-    let mut cursor_grabbed = true;
+    let mut cursor_captured = true;
 
     let mut glyphs = Glyphs::new("assets/fonts/InputMono-Regular.ttf", window.factory.clone())
         .unwrap();
@@ -62,8 +62,8 @@ fn main() {
             Input::Press(Button::Keyboard(key)) => {
                 app.handle_key(key, true);
                 if key == Key::Escape {
-                    cursor_grabbed = !cursor_grabbed;
-                    window.set_capture_cursor(cursor_grabbed);
+                    cursor_captured = !cursor_captured;
+                    window.set_capture_cursor(cursor_captured);
                 }
             }
             Input::Release(Button::Keyboard(key)) => app.handle_key(key, false),
