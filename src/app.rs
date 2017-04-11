@@ -6,12 +6,8 @@ use color;
 use map::Map;
 use player::Player;
 
-pub const SCREEN_WIDTH: u32 = 640;
-pub const SCREEN_HEIGHT: u32 = 480;
-//const SCREEN_MIDDLE_X: u32 = SCREEN_WIDTH / 2;
-const SCREEN_MIDDLE_Y: u32 = SCREEN_HEIGHT / 2;
-
 pub struct App<'a> {
+    window_size: [u32; 2],
     player: Player,
     map: &'a Map,
 }
@@ -19,6 +15,7 @@ pub struct App<'a> {
 impl<'a> App<'a> {
     pub fn new(player: Player, map: &'a Map) -> Self {
         App {
+            window_size: [0; 2],
             player: player,
             map: map,
         }
@@ -26,6 +23,10 @@ impl<'a> App<'a> {
 
     pub fn update(&mut self, dt: f64) {
         self.player.update(self.map, dt);
+    }
+
+    pub fn handle_resize(&mut self, width: u32, height: u32) {
+        self.window_size = [width, height];
     }
 
     pub fn handle_key(&mut self, key: Key, pressed: bool) {
@@ -57,9 +58,10 @@ impl<'a> App<'a> {
     pub fn render(&mut self, c: &Context, g: &mut G2d) {
         clear(color::CORNFLOWER_BLUE, g);
 
-        let screen_width_f64 = SCREEN_WIDTH as f64;
-        let screen_height_f64 = SCREEN_HEIGHT as f64;
-        let screen_middle_y_f64 = SCREEN_MIDDLE_Y as f64;
+        let screen_width_f64 = self.window_size[0] as f64;
+        let screen_height_f64 = self.window_size[1] as f64;
+        let screen_middle_x_f64 = screen_width_f64 / 2.0;
+        let screen_middle_y_f64 = screen_height_f64 / 2.0;
 
         if screen_middle_y_f64 + self.player.position.z < 0.0 {
             rectangle(color::GRAY,
@@ -78,7 +80,7 @@ impl<'a> App<'a> {
         }
 
         // draw walls
-        for x in 0..SCREEN_WIDTH {
+        for x in 0..self.window_size[0] {
             let screen_coordinate: f64 = (x as f64 * 2.0) / screen_width_f64 - 1.0;
             let ray_position = self.player.position;
             let ray_direction = self.player.direction + self.player.plane * screen_coordinate;
@@ -187,5 +189,14 @@ impl<'a> App<'a> {
                  c.trans(x as f64, 0.0).transform,
                  g);
         }
+
+        // draw crosshair
+        let crosshair_size = 5.0f64;
+        rectangle(color::PINK,
+                  [0.0, 0.0, crosshair_size, crosshair_size],
+                  c.trans(screen_middle_x_f64 - crosshair_size,
+                          screen_middle_y_f64 - crosshair_size)
+                      .transform,
+                  g);
     }
 }

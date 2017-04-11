@@ -13,11 +13,9 @@ mod player;
 use piston_window::*;
 use fps_counter::FPSCounter;
 
-use app::{App, SCREEN_WIDTH, SCREEN_HEIGHT};
+use app::App;
 use map::Map;
 use player::Player;
-
-use std::f64;
 
 fn main() {
     let map = Map::new_random(500);
@@ -25,17 +23,9 @@ fn main() {
     // let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, fov.to_radians()),
     //                        &map);
 
-    let mut app = App::new(Player::new(22.5,
-                                       12.5,
-                                       -1.0,
-                                       0.0,
-                                       0.0,
-                                       SCREEN_WIDTH as f64 / SCREEN_HEIGHT as f64 / 2.0),
-                           &map);
+    let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, 0.66), &map);
 
-    let mut window: PistonWindow = WindowSettings::new("", [SCREEN_WIDTH, SCREEN_HEIGHT])
-        .build()
-        .unwrap();
+    let mut window: PistonWindow = WindowSettings::new("", [640, 480]).build().unwrap();
     window.set_capture_cursor(true);
     let mut counter = FPSCounter::new();
     let mut cursor_captured = true;
@@ -68,6 +58,7 @@ fn main() {
             }
             Input::Release(Button::Keyboard(key)) => app.handle_key(key, false),
             Input::Move(Motion::MouseRelative(x, y)) => app.handle_mouse_relative(x, y),
+            Input::Resize(width, height) => app.handle_resize(width, height),
             _ => {}
         }
     }
