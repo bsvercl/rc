@@ -1,8 +1,8 @@
 use map::Map;
-use cgmath::{Basis2, Rad, Rotation, Rotation2, Vector2, vec2};
+use cgmath::{Vector2, vec2};
 
 const PLAYER_MOVE_SPEED: f64 = 5.0;
-const PLAYER_ROTATION_SPEED: f64 = 2.0;
+//const PLAYER_ROTATION_SPEED: f64 = 2.0;
 
 pub struct Player {
     pub position: Vector2<f64>,
@@ -11,8 +11,8 @@ pub struct Player {
 
     pub moving_forward: bool,
     pub moving_backward: bool,
-    pub turning_left: bool,
-    pub turning_right: bool,
+    pub moving_left: bool,
+    pub moving_right: bool,
     pub running: bool,
 }
 
@@ -33,8 +33,8 @@ impl Player {
 
             moving_forward: false,
             moving_backward: false,
-            turning_left: false,
-            turning_right: false,
+            moving_left: false,
+            moving_right: false,
             running: false,
         }
     }
@@ -61,7 +61,25 @@ impl Player {
             }
         }
 
-        if self.turning_left || self.turning_right {
+        if self.moving_left || self.moving_right {
+            let speed = if self.moving_left {
+                PLAYER_MOVE_SPEED * dt
+            } else {
+                -PLAYER_MOVE_SPEED * dt
+            };
+            let speed = if self.running { speed * 2.0 } else { speed };
+
+            let move_step_x = -self.plane.x * speed;
+            let move_step_y = -self.plane.y * speed;
+
+            if map.get((self.position.x + move_step_x) as usize,
+                       (self.position.y + move_step_y) as usize) == 0 {
+                self.position.x += move_step_x;
+                self.position.y += move_step_y;
+            }
+        }
+
+        /*if self.turning_left || self.turning_right {
             let speed = if self.turning_left {
                 PLAYER_ROTATION_SPEED * dt
             } else {
@@ -72,6 +90,6 @@ impl Player {
 
             self.direction = rot.rotate_vector(self.direction);
             self.plane = rot.rotate_vector(self.plane);
-        }
+        }*/
     }
 }

@@ -1,6 +1,6 @@
 use piston_window::*;
 use piston_window::types::ColorComponent;
-use cgmath::vec2;
+use cgmath::{Basis2, Rad, Rotation, Rotation2, vec2};
 
 use color;
 use map::Map;
@@ -32,13 +32,21 @@ impl<'a> App<'a> {
         match key {
             Key::W | Key::Up => self.player.moving_forward = pressed,
             Key::S | Key::Down => self.player.moving_backward = pressed,
-            Key::A | Key::Left => self.player.turning_left = pressed,
-            Key::D | Key::Right => self.player.turning_right = pressed,
-
+            Key::A => self.player.moving_left = pressed,
+            Key::D => self.player.moving_right = pressed,
             Key::LShift => self.player.running = pressed,
 
             _ => (),
         }
+    }
+
+    pub fn handle_mouse_relative(&mut self, x: f64, _: f64) {
+        let speed = x * -1.0 * 0.01;
+
+        let rot: Basis2<f64> = Rotation2::from_angle(Rad(speed));
+
+        self.player.direction = rot.rotate_vector(self.player.direction);
+        self.player.plane = rot.rotate_vector(self.player.plane);
     }
 
     pub fn render(&mut self, c: &Context, g: &mut G2d) {
@@ -133,6 +141,12 @@ impl<'a> App<'a> {
                 5 => color::YELLOW,
                 _ => color::WHITE,
             };
+
+            if north_south_wall {
+                for x in color.iter_mut().take(3) {
+                    *x /= 2.0;
+                }
+            }
 
             let brightness = (wall_distance / 2.0) as ColorComponent;
             if brightness > 1.0 {

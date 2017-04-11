@@ -1,4 +1,5 @@
 extern crate piston_window;
+
 extern crate rand;
 extern crate image as im;
 extern crate fps_counter;
@@ -33,10 +34,11 @@ fn main() {
                            &map);
 
     let mut window: PistonWindow = WindowSettings::new("", [SCREEN_WIDTH, SCREEN_HEIGHT])
-        .exit_on_esc(true)
         .build()
         .unwrap();
+    window.set_capture_cursor(true);
     let mut counter = FPSCounter::new();
+    let mut cursor_grabbed = true;
 
     let mut glyphs = Glyphs::new("assets/fonts/InputMono-Regular.ttf", window.factory.clone())
         .unwrap();
@@ -57,8 +59,15 @@ fn main() {
                     })
                     .unwrap();
             }
-            Input::Press(Button::Keyboard(key)) => app.handle_key(key, true),
+            Input::Press(Button::Keyboard(key)) => {
+                app.handle_key(key, true);
+                if key == Key::Escape {
+                    cursor_grabbed = !cursor_grabbed;
+                    window.set_capture_cursor(cursor_grabbed);
+                }
+            }
             Input::Release(Button::Keyboard(key)) => app.handle_key(key, false),
+            Input::Move(Motion::MouseRelative(x, y)) => app.handle_mouse_relative(x, y),
             _ => {}
         }
     }
