@@ -5,8 +5,8 @@ authors = ["Brad Svercl <bradsvercl@gmail.com>"]
 
 [dependencies]
 piston_window = "0.64"
-rand = "0.3"
+rand = "*"
 image = "*"
-fps_counter = "0.2"
+fps_counter = "*"
 cgmath = "*"
 
