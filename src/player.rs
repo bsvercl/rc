@@ -69,13 +69,11 @@ impl Player {
             };
             let speed = if self.running { speed * 2.0 } else { speed };
 
-            let move_step_x = -self.plane.x * speed;
-            let move_step_y = -self.plane.y * speed;
+            let move_step = -self.plane * speed;
 
-            if map.get((self.position.x + move_step_x) as usize,
-                       (self.position.y + move_step_y) as usize) == 0 {
-                self.position.x += move_step_x;
-                self.position.y += move_step_y;
+            if map.get((self.position.x + move_step.x) as usize,
+                       (self.position.y + move_step.y) as usize) == 0 {
+                self.position += move_step.extend(0.0);
             }
         }
 
