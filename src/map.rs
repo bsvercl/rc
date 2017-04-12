@@ -19,6 +19,7 @@ impl Map {
         // 1 in 10 chance to make a wall
         for i in &mut data {
             if thread_rng().gen_range(0, 10) == 0 {
+                // random color
                 *i = thread_rng().gen_range(2, 6);
             }
         }
