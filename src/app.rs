@@ -7,7 +7,8 @@ use map::Map;
 use player::Player;
 
 pub struct App<'a> {
-    window_size: [u32; 2],
+    screen_width: u32,
+    screen_height: u32,
     player: Player,
     map: &'a Map,
 }
@@ -15,7 +16,8 @@ pub struct App<'a> {
 impl<'a> App<'a> {
     pub fn new(player: Player, map: &'a Map) -> Self {
         App {
-            window_size: [0; 2],
+            screen_width: 0,
+            screen_height: 0,
             player: player,
             map: map,
         }
@@ -26,7 +28,8 @@ impl<'a> App<'a> {
     }
 
     pub fn handle_resize(&mut self, width: u32, height: u32) {
-        self.window_size = [width, height];
+        self.screen_width = width;
+        self.screen_height = height;
     }
 
     pub fn handle_key(&mut self, key: Key, pressed: bool) {
@@ -55,11 +58,11 @@ impl<'a> App<'a> {
         }
     }
 
-    pub fn render(&mut self, c: &Context, g: &mut G2d) {
+    pub fn render(&self, c: &Context, g: &mut G2d) {
         clear(color::CORNFLOWER_BLUE, g);
 
-        let screen_width_f64 = self.window_size[0] as f64;
-        let screen_height_f64 = self.window_size[1] as f64;
+        let screen_width_f64 = self.screen_width as f64;
+        let screen_height_f64 = self.screen_height as f64;
         let screen_middle_x_f64 = screen_width_f64 / 2.0;
         let screen_middle_y_f64 = screen_height_f64 / 2.0;
 
@@ -80,7 +83,7 @@ impl<'a> App<'a> {
         }
 
         // draw walls
-        for x in 0..self.window_size[0] {
+        for x in 0..self.screen_width {
             let screen_coordinate: f64 = (x as f64 * 2.0) / screen_width_f64 - 1.0;
             let ray_position = self.player.position;
             let ray_direction = self.player.direction + self.player.plane * screen_coordinate;
@@ -191,7 +194,7 @@ impl<'a> App<'a> {
         }
 
         // draw crosshair
-        let crosshair_size = 5.0f64;
+        let crosshair_size = 2.0f64;
         rectangle(color::PINK,
                   [0.0, 0.0, crosshair_size, crosshair_size],
                   c.trans(screen_middle_x_f64 - crosshair_size,

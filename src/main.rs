@@ -1,5 +1,4 @@
 extern crate piston_window;
-
 extern crate rand;
 extern crate image as im;
 extern crate fps_counter;
@@ -19,10 +18,6 @@ use player::Player;
 
 fn main() {
     let map = Map::new_random(500);
-    // let fov: f64 = 90.0;
-    // let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, fov.to_radians()),
-    //                        &map);
-
     let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, 0.66), &map);
 
     let mut window: PistonWindow = WindowSettings::new("", [640, 480]).build().unwrap();
