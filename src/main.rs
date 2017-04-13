@@ -1,4 +1,5 @@
 extern crate piston_window;
+extern crate sdl2_window;
 extern crate rand;
 extern crate image as im;
 extern crate fps_counter;
@@ -10,6 +11,7 @@ mod map;
 mod player;
 
 use piston_window::*;
+use sdl2_window::Sdl2Window;
 use fps_counter::FPSCounter;
 
 use app::App;
@@ -20,7 +22,7 @@ fn main() {
     let map = Map::new_random(500);
     let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, 0.66), &map);
 
-    let mut window: PistonWindow = WindowSettings::new("", [640, 480]).build().unwrap();
+    let mut window: PistonWindow<Sdl2Window> = WindowSettings::new("", [640, 480]).build().unwrap();
     window.set_capture_cursor(true);
     let mut counter = FPSCounter::new();
     let mut cursor_captured = true;

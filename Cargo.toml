@@ -5,6 +5,7 @@ authors = ["Brad Svercl <bradsvercl@gmail.com>"]
 
 [dependencies]
 piston_window = "0.64"
+pistoncore-sdl2_window = "*"
 rand = "*"
 image = "*"
 fps_counter = "*"
