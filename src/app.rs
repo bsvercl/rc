@@ -130,14 +130,13 @@ impl<'a> App<'a> {
 
             // distance to camera
             let wall_distance: f64 = if north_south_wall {
-                ((map_position.y as f64 - ray_position.y + (1.0 - step_y as f64) / 2.0) /
-                 ray_direction.y)
-                        .abs()
-            } else {
-                ((map_position.x as f64 - ray_position.x + (1.0 - step_x as f64) / 2.0) /
-                 ray_direction.x)
-                        .abs()
-            };
+                    (map_position.y as f64 - ray_position.y + (1.0 - step_y as f64) / 2.0) /
+                    ray_direction.y
+                } else {
+                    (map_position.x as f64 - ray_position.x + (1.0 - step_x as f64) / 2.0) /
+                    ray_direction.x
+                }
+                .abs();
 
             // the height of the wall to be drawn
             let wall_height: f64 = (screen_height_f64 / wall_distance).abs();
