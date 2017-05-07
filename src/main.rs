@@ -3,6 +3,7 @@ extern crate rand;
 extern crate image as im;
 extern crate fps_counter;
 extern crate cgmath;
+extern crate sdl2_window;
 
 mod app;
 mod color;
@@ -11,6 +12,7 @@ mod player;
 
 use piston_window::*;
 use fps_counter::FPSCounter;
+use sdl2_window::*;
 
 use app::App;
 use map::Map;
@@ -20,10 +22,12 @@ fn main() {
     let map = Map::new_random(500);
     let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, 0.66), &map);
 
-    let mut window: PistonWindow = WindowSettings::new("", [640, 480]).build().unwrap();
-    window.set_capture_cursor(true);
+    let mut window: PistonWindow<Sdl2Window> = WindowSettings::new("", [640, 480])
+        .exit_on_esc(true)
+        .build()
+        .unwrap();
     let mut counter = FPSCounter::new();
-    let mut cursor_captured = true;
+    let mut capture_cursor = false;
 
     let mut glyphs = Glyphs::new("assets/fonts/InputMono-Regular.ttf", window.factory.clone())
         .unwrap();
@@ -46,13 +50,17 @@ fn main() {
             }
             Input::Press(Button::Keyboard(key)) => {
                 app.handle_key(key, true);
-                if key == Key::Escape {
-                    cursor_captured = !cursor_captured;
-                    window.set_capture_cursor(cursor_captured);
+                if key == Key::C {
+                    capture_cursor = !capture_cursor;
+                    window.set_capture_cursor(capture_cursor);
                 }
             }
             Input::Release(Button::Keyboard(key)) => app.handle_key(key, false),
-            Input::Move(Motion::MouseRelative(x, y)) => app.handle_mouse_relative(x, y),
+            Input::Move(Motion::MouseRelative(x, y)) => {
+                if capture_cursor {
+                    app.handle_mouse_relative(x, y);
+                }
+            }
             Input::Resize(width, height) => app.handle_resize(width, height),
             _ => {}
         }

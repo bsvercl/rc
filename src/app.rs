@@ -58,7 +58,9 @@ impl<'a> App<'a> {
         }
     }
 
-    pub fn render(&self, c: &Context, g: &mut G2d) {
+    pub fn render<G>(&self, c: &Context, g: &mut G)
+        where G: Graphics
+    {
         clear(color::CORNFLOWER_BLUE, g);
 
         let screen_width_f64 = self.screen_width as f64;

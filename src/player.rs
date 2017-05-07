@@ -63,10 +63,10 @@ impl Player {
 
         if self.moving_left || self.moving_right {
             let speed = if self.moving_left {
-                PLAYER_MOVE_SPEED * dt
+                PLAYER_MOVE_SPEED
             } else {
-                -PLAYER_MOVE_SPEED * dt
-            };
+                -PLAYER_MOVE_SPEED
+            } * dt;
             let speed = if self.running { speed * 2.0 } else { speed };
 
             let move_step = -self.plane * speed;
