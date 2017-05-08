@@ -6,15 +6,7 @@ pub struct Map {
 }
 
 impl Map {
-    #[allow(dead_code)]
-    pub fn new(data: &[usize], size: usize) -> Self {
-        Map {
-            data: data.to_vec(),
-            size: size,
-        }
-    }
-
-    pub fn new_random(size: usize) -> Self {
+    pub fn random(size: usize) -> Self {
         let mut data: Vec<usize> = vec![0; size * size];
         // 1 in 10 chance to make a wall
         for i in &mut data {

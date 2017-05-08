@@ -19,7 +19,7 @@ use map::Map;
 use player::Player;
 
 fn main() {
-    let map = Map::new_random(500);
+    let map = Map::random(500);
     let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, 0.66), &map);
 
     let mut window: PistonWindow<Sdl2Window> = WindowSettings::new("", [640, 480])
