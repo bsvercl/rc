@@ -2,7 +2,6 @@
 name = "rc"
 version = "0.1.0"
 authors = ["Brad Svercl <bradsvercl@gmail.com>"]
-build = "build.rs"
 
 [dependencies]
 piston_window = "*"
@@ -10,4 +9,3 @@ rand = "*"
 image = "*"
 fps_counter = "*"
 cgmath = "*"
-pistoncore-sdl2_window = "*"

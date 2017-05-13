@@ -3,7 +3,6 @@ extern crate rand;
 extern crate image as im;
 extern crate fps_counter;
 extern crate cgmath;
-extern crate sdl2_window;
 
 mod app;
 mod color;
@@ -12,7 +11,6 @@ mod player;
 
 use piston_window::*;
 use fps_counter::FPSCounter;
-use sdl2_window::*;
 
 use app::App;
 use map::Map;
@@ -22,7 +20,7 @@ fn main() {
     let map = Map::random(500);
     let mut app = App::new(Player::new(22.5, 12.5, -1.0, 0.0, 0.0, 0.66), &map);
 
-    let mut window: PistonWindow<Sdl2Window> = WindowSettings::new("", [640, 480])
+    let mut window: PistonWindow = WindowSettings::new("", [640, 480])
         .exit_on_esc(true)
         .build()
         .unwrap();
